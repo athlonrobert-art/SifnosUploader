@@ -76,6 +76,27 @@ app.get('/photos', async (req, res) => {
   }
 });
 
+// Delete a photo
+app.post('/delete', async (req, res) => {
+  try {
+    const { public_id } = req.body;
+    
+    if (!public_id) {
+      return res.status(400).json({ success: false, error: 'public_id required' });
+    }
+
+    console.log(`Deleting ${public_id} from Cloudinary...`);
+
+    const result = await cloudinary.uploader.destroy(public_id);
+
+    console.log(`Delete result:`, result);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Health check
 app.get('/', (req, res) => {
   res.json({ status: 'Cloudinary upload server is running' });
